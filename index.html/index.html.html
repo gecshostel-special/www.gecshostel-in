@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Engineering College Hostel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="download.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img class="brand-logo" alt="GEC Hostel" src="download.png" />
+        <span class="brand-title">Government Engineering College samastipur Hostel</span>
+      </div>
+      <nav class="nav">
+        <a href="home.html" class="nav-link active">Home</a>
+        <a href="hostel.html" class="nav-link">Hostel</a>
+        <a href="payment.html" class="nav-link">Payment</a>
+        <a href="about.html" class="nav-link">About us</a>
+        <a href="admin.html" class="nav-link">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="notices" class="card">
+      <h2>Notices</h2>
+      <ul id="noticeList" class="list"></ul>
+    </section>
+
+    <section id="rooms" class="card">
+      <h2>Room Availability & Booking</h2>
+      <div class="grid two">
+        <div>
+          <label for="floorSelect">Select Floor</label>
+          <select id="floorSelect"></select>
+        </div>
+        <div>
+          <label for="roomTypeSelect">Room Type</label>
+          <select id="roomTypeSelect">
+            <option value="any">Any</option>
+            <option value="single">Single</option>
+            <option value="double">Double</option>
+            <option value="triple">Triple</option>
+          </select>
+        </div>
+      </div>
+      <div id="roomResults" class="room-results"></div>
+      <form id="bookingForm" class="form hidden">
+        <h3>Book Room</h3>
+        <div class="grid two">
+          <div>
+            <label for="studentName">Student Name</label>
+            <input type="text" id="studentName" required>
+          </div>
+          <div>
+            <label for="studentId">Student ID</label>
+            <input type="text" id="studentId" required>
+          </div>
+        </div>
+        <div class="grid two">
+          <div>
+            <label for="selectedFloor">Floor</label>
+            <input type="text" id="selectedFloor" readonly>
+          </div>
+          <div>
+            <label for="selectedRoom">Room</label>
+            <input type="text" id="selectedRoom" readonly>
+          </div>
+        </div>
+        <button type="submit" class="btn primary">Confirm Booking</button>
+        <button type="button" id="cancelBooking" class="btn">Cancel</button>
+      </form>
+    </section>
+
+    <section id="student-login" class="card">
+      <h2>Student Login</h2>
+      <form id="studentLoginForm" class="form">
+        <div class="grid two">
+          <div>
+            <label for="loginStudentId">Student ID</label>
+            <input type="text" id="loginStudentId" required>
+          </div>
+          <div>
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" required>
+          </div>
+        </div>
+        <button type="submit" class="btn primary">Login</button>
+        <p id="studentLoginMsg" class="muted"></p>
+      </form>
+    </section>
+
+    <section id="fees" class="card">
+      <h2>Fees</h2>
+      <div class="grid two">
+        <div class="fee-card">
+          <h3>Mess Fees</h3>
+          <p id="messFeesAmount" class="fee-amount">-</p>
+        </div>
+        <div class="fee-card">
+          <h3>Hostel Fees & Room Charges</h3>
+          <ul id="hostelFeesList" class="list"></ul>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="payment.html" class="btn primary">Pay Hostel Fees Online</a>
+      </div>
+    </section>
+
+    <section id="complain" class="card">
+      <h2>i-Complain</h2>
+      <form id="complainForm" class="form">
+        <div class="grid two">
+          <div>
+            <label for="complainStudentId">Student ID</label>
+            <input type="text" id="complainStudentId" required>
+          </div>
+          <div>
+            <label for="complainCategory">Category</label>
+            <select id="complainCategory" required>
+              <option value="maintenance">Maintenance</option>
+              <option value="mess">Mess</option>
+              <option value="security">Security</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <label for="complainText">Describe your issue</label>
+        <textarea id="complainText" rows="4" required></textarea>
+        <button type="submit" class="btn primary">Submit</button>
+        <p id="complainMsg" class="muted"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>&copy; <span id="year"></span> Government Engineering College samastipur Hostel</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

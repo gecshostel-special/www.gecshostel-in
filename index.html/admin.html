@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin • Government Engineering College Hotel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="download.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img class="brand-logo" alt="GEC Hostel" src="download.png" />
+        <span class="brand-title">Admin Panel</span>
+      </div>
+      <nav class="nav">
+        <a href="home.html" class="nav-link">Home</a>
+        <a href="hostel.html" class="nav-link">Hostel</a>
+        <a href="payment.html" class="nav-link">Payment</a>
+        <a href="admin.html" class="nav-link active">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card" id="admin-login-card">
+      <h2>Administrator Login</h2>
+      <form id="adminLoginForm" class="form">
+        <div class="grid two">
+          <div>
+            <label for="adminUser">Username</label>
+            <input type="text" id="adminUser" required>
+          </div>
+          <div>
+            <label for="adminPass">Password</label>
+            <input type="password" id="adminPass" required>
+          </div>
+        </div>
+        <button type="submit" class="btn primary">Login</button>
+        <p id="adminLoginMsg" class="muted"></p>
+      </form>
+    </section>
+
+    <section class="card hidden" id="admin-dashboard">
+      <h2>Dashboard</h2>
+      <div class="grid two">
+        <div class="fee-card">
+          <h3>Post Notice</h3>
+          <form id="postNoticeForm" class="form">
+            <label for="noticeText">Notice</label>
+            <textarea id="noticeText" rows="3"></textarea>
+            <button type="submit" class="btn primary">Publish</button>
+            <p class="muted">This demo stores data in-memory only.</p>
+          </form>
+        </div>
+        <div class="fee-card">
+          <h3>Update Fees</h3>
+          <form id="updateFeesForm" class="form">
+            <label for="messFee">Mess Fee (per month)</label>
+            <input type="text" id="messFee" placeholder="₹ 3,500">
+            <label for="singleFee">Single (per year)</label>
+            <input type="text" id="singleFee" placeholder="₹ 18,000">
+            <label for="doubleFee">Double (per year)</label>
+            <input type="text" id="doubleFee" placeholder="₹ 15,000">
+            <label for="tripleFee">Triple (per year)</label>
+            <input type="text" id="tripleFee" placeholder="₹ 15,000">
+            <button type="submit" class="btn primary">Save</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-top:16px">
+        <h3>Payment Information</h3>
+        <div class="fee-card">
+          <h4>📱 Admin UPI ID</h4>
+          <p style="font-size: 20px; font-weight: bold; color: var(--primary); margin: 10px 0;">7782891946@paytm</p>
+          <p style="color: var(--muted); margin: 5px 0;">Students can use this UPI ID to make payments directly to the hostel admin</p>
+          <small style="color: var(--muted);">This UPI ID is displayed on the payment gateway for student reference</small>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-top:16px">
+        <h3>Pending Payment Confirmations</h3>
+        <div id="pendingPaymentsList">
+          <p class="muted">No pending payments</p>
+        </div>
+        <button class="btn primary" id="refreshPendingPayments">Refresh</button>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Payment Screenshots Gallery</h3>
+        <div id="screenshotsGallery">
+          <p class="muted">No screenshots uploaded yet</p>
+        </div>
+        <button class="btn primary" id="refreshScreenshots">Refresh Gallery</button>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Payment Statistics</h3>
+        <div class="grid two">
+          <div class="fee-card">
+            <h4>Total Revenue</h4>
+            <p id="totalRevenue" class="fee-amount">₹0</p>
+          </div>
+          <div class="fee-card">
+            <h4>Total Transactions</h4>
+            <p id="totalTransactions" class="fee-amount">0</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="fee-card">
+            <h4>This Month</h4>
+            <p id="monthlyRevenue" class="fee-amount">₹0</p>
+          </div>
+          <div class="fee-card">
+            <h4>Pending Payments</h4>
+            <p id="pendingPayments" class="fee-amount">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Logs</h3>
+        <div class="grid two">
+          <div>
+            <h4>Request Logs</h4>
+            <button class="btn" id="clearRequestLogs">Clear</button>
+            <div id="tableRequestLogs"></div>
+          </div>
+          <div>
+            <h4>Bookings</h4>
+            <button class="btn" id="clearBookings">Clear</button>
+            <div id="tableBookings"></div>
+          </div>
+        </div>
+        <div class="grid two">
+          <div>
+            <h4>Signups</h4>
+            <button class="btn" id="clearSignups">Clear</button>
+            <div id="tableSignups"></div>
+          </div>
+          <div>
+            <h4>Sign-ins</h4>
+            <button class="btn" id="clearSignins">Clear</button>
+            <div id="tableSignins"></div>
+          </div>
+        </div>
+        <div class="grid two">
+          <div>
+            <h4>Payments</h4>
+            <button class="btn" id="clearPayments">Clear</button>
+            <button class="btn" id="exportPayments">Export CSV</button>
+            <div id="tablePayments"></div>
+          </div>
+          <div>
+            <h4>User Activity</h4>
+            <button class="btn" id="clearUserActivity">Clear</button>
+            <div id="tableUserActivity"></div>
+          </div>
+        </div>
+        <div>
+          <h4>Login Activity</h4>
+          <button class="btn" id="clearLoginActivity">Clear</button>
+          <div id="tableLoginActivity"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>&copy; <span id="year"></span> Government Engineering College Hotel</span>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const loginForm=document.getElementById('adminLoginForm');
+      const loginMsg=document.getElementById('adminLoginMsg');
+      const card=document.getElementById('admin-login-card');
+      const dash=document.getElementById('admin-dashboard');
+      const yearEl=document.getElementById('year');
+      if(yearEl){yearEl.textContent=String(new Date().getFullYear());}
+      let state={notices:[],fees:{mess:'₹ 3,500 / month',single:'₹ 18,000 / year',double:'₹ 15,000 / year',triple:'₹ 15,000 / year'}};
+
+      function getStore(key, fallback){
+        try{ const v=localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; }
+      }
+      function setStore(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
+      function renderTable(containerId, rows){
+        const el=document.getElementById(containerId);
+        if(!el){return}
+        if(!rows || rows.length===0){ el.innerHTML='<p class="muted">No data</p>'; return; }
+        const cols=Object.keys(rows[0]);
+        let html='<div class="card" style="overflow:auto"><table style="width:100%;border-collapse:collapse">';
+        html+='<thead><tr>' + cols.map(c=>`<th style="text-align:left;border-bottom:1px solid #1f2937;padding:6px">${c}</th>`).join('') + '</tr></thead>';
+        html+='<tbody>' + rows.map(r=>'<tr>'+cols.map(c=>`<td style="padding:6px;border-bottom:1px dashed #1f2937">${String(r[c])}</td>`).join('')+'</tr>').join('') + '</tbody>';
+        html+='</table></div>';
+        el.innerHTML=html;
+      }
+      loginForm.addEventListener('submit',function(e){
+        e.preventDefault();
+        const u=document.getElementById('adminUser').value.trim();
+        const p=document.getElementById('adminPass').value.trim();
+        if(u==='admin' && p==='admin'){
+          loginMsg.textContent='Login successful.';loginMsg.style.color='#10b981';
+          card.classList.add('hidden');
+          dash.classList.remove('hidden');
+          loadAllTables();
+        }else{
+          loginMsg.textContent='Invalid. Hint: admin/admin';loginMsg.style.color='#ef4444';
+        }
+      });
+
+      const postNoticeForm=document.getElementById('postNoticeForm');
+      postNoticeForm.addEventListener('submit',function(e){
+        e.preventDefault();
+        const txt=document.getElementById('noticeText').value.trim();
+        if(!txt){return;}
+        const all=getStore('notices', []);
+        all.push({id:Date.now(), text:txt});
+        setStore('notices', all);
+        alert('Notice published.');
+        loadAllTables();
+        postNoticeForm.reset();
+      });
+
+      const updateFeesForm=document.getElementById('updateFeesForm');
+      updateFeesForm.addEventListener('submit',function(e){
+        e.preventDefault();
+        const mess=document.getElementById('messFee').value.trim()||'₹ 3,500 / month';
+        const single=document.getElementById('singleFee').value.trim()||'₹ 18,000 / year';
+        const double=document.getElementById('doubleFee').value.trim()||'₹ 15,000 / year';
+        const triple=document.getElementById('tripleFee').value.trim()||'₹ 15,000 / year';
+        setStore('fees', {mess, single, double, triple});
+        alert('Fees updated.');
+        loadAllTables();
+      });
+
+      function loadAllTables(){
+        renderTable('tableRequestLogs', getStore('request_logs', []));
+        renderTable('tableBookings', getStore('bookings', []));
+        renderTable('tableSignups', getStore('signups', []));
+        renderTable('tableSignins', getStore('sign_in_logs', []));
+        renderTable('tablePayments', getStore('payments', []));
+        renderTable('tableUserActivity', getStore('user_activity', []));
+        renderTable('tableLoginActivity', getStore('login_activity', []));
+        updatePaymentStatistics();
+        loadPendingPayments();
+        loadScreenshotsGallery();
+      }
+
+      function loadPendingPayments(){
+        const payments = getStore('payments', []);
+        const pendingPayments = payments.filter(payment => payment.status === 'pending');
+        const container = document.getElementById('pendingPaymentsList');
+        
+        if(pendingPayments.length === 0){
+          container.innerHTML = '<p class="muted">No pending payments</p>';
+          return;
+        }
+        
+        let html = '';
+        pendingPayments.forEach(payment => {
+          html += `
+            <div class="fee-card" style="margin: 12px 0; border: 2px solid #ffa500;">
+              <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                  <h4>${payment.studentName} (${payment.studentId})</h4>
+                  <p><strong>Amount:</strong> ₹${payment.amount.toLocaleString()}</p>
+                  <p><strong>Fee Type:</strong> ${payment.feeType}</p>
+                  <p><strong>Payment Method:</strong> ${payment.paymentMethod}</p>
+                  <p><strong>Date:</strong> ${new Date(payment.timestamp).toLocaleDateString()}</p>
+                  <p><strong>Transaction ID:</strong> ${payment.transactionId}</p>
+                  ${payment.adminUpiId ? `<p><strong>Admin UPI:</strong> ${payment.adminUpiId}</p>` : ''}
+                  ${payment.screenshotUploaded ? '<p style="color: #10b981;"><strong>📷 Screenshot uploaded</strong></p>' : ''}
+                  
+                  ${payment.screenshotUploaded ? `
+                    <div style="margin-top: 12px;">
+                      <h5>📷 Payment Screenshot:</h5>
+                      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: #0d152a;">
+                        <img src="${payment.screenshotData || '#'}" 
+                             alt="Payment Screenshot" 
+                             style="max-width: 100%; max-height: 200px; border-radius: 4px; cursor: pointer;"
+                             onclick="viewScreenshot('${payment.transactionId}')"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <p style="display: none; color: var(--muted); text-align: center; margin: 8px 0;">Screenshot not available</p>
+                        <button class="btn" onclick="viewScreenshot('${payment.transactionId}')" style="margin-top: 8px; width: 100%;">
+                          🔍 View Full Screenshot
+                        </button>
+                      </div>
+                    </div>
+                  ` : `
+                    <div style="margin-top: 12px; padding: 8px; background: #1a1a2e; border-radius: 6px; border: 1px solid #ffa500;">
+                      <p style="margin: 0; color: #ffa500; font-weight: bold;">⚠️ No screenshot uploaded</p>
+                      <small style="color: var(--muted);">Student did not upload payment proof</small>
+                    </div>
+                  `}
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 16px;">
+                  <button class="btn primary" onclick="confirmPayment('${payment.transactionId}')">✅ Confirm Payment</button>
+                  <button class="btn" onclick="rejectPayment('${payment.transactionId}')">❌ Reject</button>
+                  <button class="btn" onclick="requestScreenshot('${payment.transactionId}')">📷 Request Screenshot</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        container.innerHTML = html;
+      }
+
+      function confirmPayment(transactionId){
+        const payments = getStore('payments', []);
+        const paymentIndex = payments.findIndex(p => p.transactionId === transactionId);
+        
+        if(paymentIndex !== -1){
+          payments[paymentIndex].status = 'completed';
+          payments[paymentIndex].confirmedAt = new Date().toISOString();
+          payments[paymentIndex].confirmedBy = 'admin';
+          
+          setStore('payments', payments);
+          
+          // Log admin action
+          const logEntry = {
+            action: 'payment_confirmed',
+            transactionId: transactionId,
+            studentId: payments[paymentIndex].studentId,
+            amount: payments[paymentIndex].amount,
+            timestamp: new Date().toISOString()
+          };
+          const logs = getStore('user_activity', []);
+          logs.push(logEntry);
+          setStore('user_activity', logs);
+          
+          alert('Payment confirmed successfully!');
+          loadAllTables();
+        }
+      }
+
+      function rejectPayment(transactionId){
+        const payments = getStore('payments', []);
+        const paymentIndex = payments.findIndex(p => p.transactionId === transactionId);
+        
+        if(paymentIndex !== -1){
+          payments[paymentIndex].status = 'rejected';
+          payments[paymentIndex].rejectedAt = new Date().toISOString();
+          payments[paymentIndex].rejectedBy = 'admin';
+          
+          setStore('payments', payments);
+          
+          // Log admin action
+          const logEntry = {
+            action: 'payment_rejected',
+            transactionId: transactionId,
+            studentId: payments[paymentIndex].studentId,
+            amount: payments[paymentIndex].amount,
+            timestamp: new Date().toISOString()
+          };
+          const logs = getStore('user_activity', []);
+          logs.push(logEntry);
+          setStore('user_activity', logs);
+          
+          alert('Payment rejected!');
+          loadAllTables();
+        }
+      }
+
+      function viewScreenshot(transactionId){
+        const payments = getStore('payments', []);
+        const payment = payments.find(p => p.transactionId === transactionId);
+        
+        if(payment && payment.screenshotData){
+          // Create a modal to view the screenshot
+          const modal = document.createElement('div');
+          modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+            align-items: center; justify-content: center; padding: 20px;
+          `;
+          
+          modal.innerHTML = `
+            <div style="background: var(--card); border-radius: 12px; padding: 20px; max-width: 90%; max-height: 90%; position: relative;">
+              <button onclick="this.parentElement.parentElement.remove()" 
+                      style="position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">×</button>
+              <h3 style="margin: 0 0 15px 0;">Payment Screenshot - ${payment.studentName}</h3>
+              <img src="${payment.screenshotData}" 
+                   alt="Payment Screenshot" 
+                   style="max-width: 100%; max-height: 70vh; border-radius: 8px; border: 1px solid var(--border);">
+              <div style="margin-top: 15px; text-align: center;">
+                <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                <p><strong>Amount:</strong> ₹${payment.amount.toLocaleString()}</p>
+                <p><strong>Date:</strong> ${new Date(payment.timestamp).toLocaleDateString()}</p>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          
+          // Close modal when clicking outside
+          modal.addEventListener('click', (e) => {
+            if(e.target === modal){
+              modal.remove();
+            }
+          });
+        } else {
+          alert('Screenshot not available for this payment.');
+        }
+      }
+
+      function requestScreenshot(transactionId){
+        const payments = getStore('payments', []);
+        const payment = payments.find(p => p.transactionId === transactionId);
+        
+        if(payment){
+          // Log the request
+          const logEntry = {
+            action: 'screenshot_requested',
+            transactionId: transactionId,
+            studentId: payment.studentId,
+            amount: payment.amount,
+            timestamp: new Date().toISOString()
+          };
+          const logs = getStore('user_activity', []);
+          logs.push(logEntry);
+          setStore('user_activity', logs);
+          
+          alert(`Screenshot request logged for ${payment.studentName} (${payment.studentId}). Student will be notified to upload payment proof.`);
+        }
+      }
+
+      // Make functions globally accessible
+      window.confirmPayment = confirmPayment;
+      window.rejectPayment = rejectPayment;
+      window.viewScreenshot = viewScreenshot;
+      window.requestScreenshot = requestScreenshot;
+
+      function loadScreenshotsGallery(){
+        const payments = getStore('payments', []);
+        const paymentsWithScreenshots = payments.filter(payment => payment.screenshotUploaded && payment.screenshotData);
+        const container = document.getElementById('screenshotsGallery');
+        
+        if(paymentsWithScreenshots.length === 0){
+          container.innerHTML = '<p class="muted">No screenshots uploaded yet</p>';
+          return;
+        }
+        
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">';
+        
+        paymentsWithScreenshots.forEach(payment => {
+          html += `
+            <div class="fee-card" style="padding: 12px;">
+              <div style="text-align: center;">
+                <img src="${payment.screenshotData}" 
+                     alt="Payment Screenshot" 
+                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); cursor: pointer;"
+                     onclick="viewScreenshot('${payment.transactionId}')">
+                <h5 style="margin: 8px 0 4px 0;">${payment.studentName}</h5>
+                <p style="margin: 2px 0; color: var(--muted); font-size: 12px;">${payment.studentId}</p>
+                <p style="margin: 2px 0; color: var(--primary); font-weight: bold;">₹${payment.amount.toLocaleString()}</p>
+                <p style="margin: 2px 0; color: var(--muted); font-size: 11px;">${new Date(payment.timestamp).toLocaleDateString()}</p>
+                <div style="margin-top: 8px;">
+                  <span style="background: ${payment.status === 'completed' ? '#10b981' : payment.status === 'pending' ? '#ffa500' : '#ef4444'}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px;">
+                    ${payment.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+      }
+
+      function updatePaymentStatistics(){
+        const payments = getStore('payments', []);
+        const totalRevenue = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
+        const totalTransactions = payments.length;
+        
+        // Calculate monthly revenue
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        const monthlyRevenue = payments
+          .filter(payment => {
+            const paymentDate = new Date(payment.timestamp);
+            return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear;
+          })
+          .reduce((sum, payment) => sum + (payment.amount || 0), 0);
+        
+        // Count pending payments
+        const pendingPayments = payments.filter(payment => payment.status === 'pending').length;
+        
+        document.getElementById('totalRevenue').textContent = '₹' + totalRevenue.toLocaleString();
+        document.getElementById('totalTransactions').textContent = totalTransactions.toString();
+        document.getElementById('monthlyRevenue').textContent = '₹' + monthlyRevenue.toLocaleString();
+        document.getElementById('pendingPayments').textContent = pendingPayments.toString();
+      }
+
+      function exportPaymentsToCSV(){
+        const payments = getStore('payments', []);
+        if(payments.length === 0){
+          alert('No payment data to export');
+          return;
+        }
+        
+        const headers = ['Transaction ID', 'Student Name', 'Student ID', 'Email', 'Phone', 'Fee Type', 'Amount', 'Payment Method', 'Status', 'Date'];
+        const csvContent = [
+          headers.join(','),
+          ...payments.map(payment => [
+            payment.transactionId || '',
+            payment.studentName || '',
+            payment.studentId || '',
+            payment.email || '',
+            payment.phone || '',
+            payment.feeType || '',
+            payment.amount || '',
+            payment.paymentMethod || '',
+            payment.status || '',
+            payment.timestamp ? new Date(payment.timestamp).toLocaleDateString() : ''
+          ].join(','))
+        ].join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `payments_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+      function clearAndReload(key){ localStorage.removeItem(key); loadAllTables(); }
+      document.getElementById('clearRequestLogs').addEventListener('click',()=>clearAndReload('request_logs'));
+      document.getElementById('clearBookings').addEventListener('click',()=>clearAndReload('bookings'));
+      document.getElementById('clearSignups').addEventListener('click',()=>clearAndReload('signups'));
+      document.getElementById('clearSignins').addEventListener('click',()=>clearAndReload('sign_in_logs'));
+      document.getElementById('clearPayments').addEventListener('click',()=>clearAndReload('payments'));
+      document.getElementById('exportPayments').addEventListener('click',()=>exportPaymentsToCSV());
+      document.getElementById('refreshPendingPayments').addEventListener('click',()=>loadPendingPayments());
+      document.getElementById('refreshScreenshots').addEventListener('click',()=>loadScreenshotsGallery());
+      document.getElementById('clearUserActivity').addEventListener('click',()=>clearAndReload('user_activity'));
+      document.getElementById('clearLoginActivity').addEventListener('click',()=>clearAndReload('login_activity'));
+    })();
+  </script>
+</body>
+</html>
+

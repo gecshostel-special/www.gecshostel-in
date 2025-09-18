@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Gateway • Government Engineering College Hostel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="download.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    .payment-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .payment-step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      display: none;
+    }
+    .payment-step.active {
+      display: block;
+    }
+    .fee-option {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 12px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .fee-option:hover {
+      border-color: var(--primary);
+      background: #0d152a;
+    }
+    .fee-option.selected {
+      border-color: var(--primary);
+      background: #0d152a;
+    }
+    .fee-option h3 {
+      margin: 0 0 8px 0;
+      color: var(--primary);
+    }
+    .fee-option p {
+      margin: 4px 0;
+      color: var(--muted);
+    }
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .payment-method {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .payment-method:hover {
+      border-color: var(--primary);
+    }
+    .payment-method.selected {
+      border-color: var(--primary);
+      background: #0d152a;
+    }
+    .payment-method img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 8px;
+    }
+    .receipt-preview {
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-family: monospace;
+    }
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .receipt-details {
+      margin: 10px 0;
+    }
+    .receipt-footer {
+      border-top: 2px solid #333;
+      padding-top: 10px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .progress-bar {
+      background: var(--border);
+      height: 4px;
+      border-radius: 2px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: var(--primary);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+    .step.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .step.completed {
+      color: var(--text);
+      border-bottom-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img class="brand-logo" alt="GEC Hostel" src="download.png" />
+        <span class="brand-title">Government Engineering College Hostel</span>
+      </div>
+      <nav class="nav">
+        <a href="home.html" class="nav-link">Home</a>
+        <a href="hostel.html" class="nav-link">Hostel</a>
+        <a href="payment.html" class="nav-link active">Payment</a>
+        <a href="admin.html" class="nav-link">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container payment-container">
+    <section class="card">
+      <h1>Hostel Fee Payment Gateway</h1>
+      <p>Secure payment processing for hostel fees and charges</p>
+      
+      <!-- Progress Indicator -->
+      <div class="step-indicator">
+        <div class="step active" id="step1-indicator">1. Select Fee</div>
+        <div class="step" id="step2-indicator">2. Payment Method</div>
+        <div class="step" id="step3-indicator">3. Payment Details</div>
+        <div class="step" id="step4-indicator">4. Receipt</div>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </section>
+
+    <!-- Step 1: Fee Selection -->
+    <section class="payment-step active" id="step1">
+      <h2>Select Fee Type</h2>
+      <div class="fee-option" data-fee="mess" data-amount="3500" data-period="month">
+        <h3>Mess Fee</h3>
+        <p><strong>Amount:</strong> ₹3,500</p>
+        <p><strong>Period:</strong> Per Month</p>
+        <p><strong>Description:</strong> Monthly mess charges for meals</p>
+      </div>
+      
+      <div class="fee-option" data-fee="single" data-amount="18000" data-period="year">
+        <h3>Single Room Fee</h3>
+        <p><strong>Amount:</strong> ₹18,000</p>
+        <p><strong>Period:</strong> Per Year</p>
+        <p><strong>Description:</strong> Annual hostel fee for single occupancy room</p>
+      </div>
+      
+      <div class="fee-option" data-fee="double" data-amount="15000" data-period="year">
+        <h3>Double Room Fee</h3>
+        <p><strong>Amount:</strong> ₹15,000</p>
+        <p><strong>Period:</strong> Per Year</p>
+        <p><strong>Description:</strong> Annual hostel fee for double occupancy room</p>
+      </div>
+      
+      <div class="fee-option" data-fee="triple" data-amount="15000" data-period="year">
+        <h3>Triple Room Fee</h3>
+        <p><strong>Amount:</strong> ₹15,000</p>
+        <p><strong>Period:</strong> Per Year</p>
+        <p><strong>Description:</strong> Annual hostel fee for triple occupancy room</p>
+      </div>
+      
+      <div class="fee-option" data-fee="security" data-amount="5000" data-period="one-time">
+        <h3>Security Deposit</h3>
+        <p><strong>Amount:</strong> ₹5,000</p>
+        <p><strong>Period:</strong> One-time (Refundable)</p>
+        <p><strong>Description:</strong> Security deposit for room booking</p>
+      </div>
+      
+      <button class="btn primary" id="next-step1" disabled>Next: Payment Method</button>
+    </section>
+
+    <!-- Step 2: Payment Method -->
+    <section class="payment-step" id="step2">
+      <h2>Choose Payment Method</h2>
+      <div class="payment-methods">
+        <div class="payment-method" data-method="card">
+          <div>💳</div>
+          <h3>Credit/Debit Card</h3>
+          <p>Visa, MasterCard, RuPay</p>
+        </div>
+        <div class="payment-method" data-method="upi">
+          <div>📱</div>
+          <h3>UPI Payment</h3>
+          <p>PhonePe, Google Pay, Paytm</p>
+          <small style="color: var(--primary); margin-top: 5px; display: block;">Admin UPI: 7782891946@paytm</small>
+        </div>
+        <div class="payment-method" data-method="netbanking">
+          <div>🏦</div>
+          <h3>Net Banking</h3>
+          <p>All major banks</p>
+        </div>
+        <div class="payment-method" data-method="wallet">
+          <div>💰</div>
+          <h3>Digital Wallet</h3>
+          <p>Paytm, PhonePe Wallet</p>
+        </div>
+      </div>
+      
+      <button class="btn primary" id="next-step2" disabled>Next: Payment Details</button>
+      <button class="btn" id="back-step2">Back</button>
+    </section>
+
+    <!-- Step 3: Payment Details -->
+    <section class="payment-step" id="step3">
+      <h2>Payment Details</h2>
+      <form id="paymentForm" class="form">
+        <div class="grid two">
+          <div>
+            <label for="studentName">Student Name</label>
+            <input type="text" id="studentName" required>
+          </div>
+          <div>
+            <label for="studentId">Student ID</label>
+            <input type="text" id="studentId" required>
+          </div>
+        </div>
+        
+        <div class="grid two">
+          <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required>
+          </div>
+          <div>
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" required>
+          </div>
+        </div>
+        
+        <div id="cardDetails" class="hidden">
+          <h3>Card Details</h3>
+          <div class="grid two">
+            <div>
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+            </div>
+            <div>
+              <label for="cardName">Cardholder Name</label>
+              <input type="text" id="cardName" placeholder="John Doe">
+            </div>
+          </div>
+          <div class="grid two">
+            <div>
+              <label for="expiryDate">Expiry Date</label>
+              <input type="text" id="expiryDate" placeholder="MM/YY">
+            </div>
+            <div>
+              <label for="cvv">CVV</label>
+              <input type="text" id="cvv" placeholder="123">
+            </div>
+          </div>
+        </div>
+        
+        <div id="upiDetails" class="hidden">
+          <h3>UPI Payment Instructions</h3>
+          <div style="background: #0d152a; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 2px solid var(--primary);">
+            <p style="margin: 0; color: var(--primary); font-weight: bold;">📱 Pay to Admin UPI ID:</p>
+            <p style="margin: 8px 0; font-size: 20px; font-weight: bold; color: #fff;">7782891946@paytm</p>
+            <div style="background: #1a1a2e; padding: 12px; border-radius: 6px; margin: 12px 0;">
+              <p style="margin: 0; font-weight: bold; color: #ffd700;">⚠️ Important Instructions:</p>
+              <ol style="margin: 8px 0; padding-left: 20px; color: var(--text);">
+                <li>Open your UPI app (PhonePe, Google Pay, Paytm, etc.)</li>
+                <li>Enter UPI ID: <strong>7782891946@paytm</strong></li>
+                <li>Enter amount: <strong>₹<span id="upiAmount">0</span></strong></li>
+                <li>Add description: "Hostel Fee - <span id="upiDescription">-</span>"</li>
+                <li>Complete the payment</li>
+                <li>Take a screenshot of payment confirmation</li>
+              </ol>
+            </div>
+            <p style="margin: 8px 0 0 0; color: var(--muted); font-size: 14px;">
+              <strong>Note:</strong> This is a manual payment process. Admin will verify and confirm your payment.
+            </p>
+          </div>
+          <div>
+            <label for="upiId">Your UPI ID (for receipt)</label>
+            <input type="text" id="upiId" placeholder="student@paytm">
+          </div>
+          <div>
+            <label for="paymentScreenshot">Upload Payment Screenshot (Optional)</label>
+            <input type="file" id="paymentScreenshot" accept="image/*">
+            <small style="color: var(--muted);">Upload screenshot of your UPI payment confirmation</small>
+            <div id="screenshotPreview" style="margin-top: 8px; display: none;">
+              <div style="background: #0d152a; padding: 8px; border-radius: 6px; border: 1px solid var(--primary);">
+                <p style="margin: 0; color: var(--primary); font-weight: bold;">📷 Screenshot uploaded successfully!</p>
+                <small style="color: var(--muted);">File: <span id="screenshotFileName">-</span></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="netbankingDetails" class="hidden">
+          <h3>Net Banking</h3>
+          <div>
+            <label for="bankName">Select Bank</label>
+            <select id="bankName">
+              <option value="">Select Bank</option>
+              <option value="sbi">State Bank of India</option>
+              <option value="hdfc">HDFC Bank</option>
+              <option value="icici">ICICI Bank</option>
+              <option value="axis">Axis Bank</option>
+              <option value="pnb">Punjab National Bank</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="fee-summary">
+          <h3>Payment Summary</h3>
+          <div class="receipt-preview">
+            <div class="receipt-header">
+              <h2>GEC Hostel Payment Receipt</h2>
+              <p>Government Engineering College, Samastipur</p>
+            </div>
+            <div class="receipt-details">
+              <p><strong>Student Name:</strong> <span id="previewName">-</span></p>
+              <p><strong>Student ID:</strong> <span id="previewId">-</span></p>
+              <p><strong>Fee Type:</strong> <span id="previewFeeType">-</span></p>
+              <p><strong>Amount:</strong> ₹<span id="previewAmount">-</span></p>
+              <p><strong>Payment Method:</strong> <span id="previewMethod">-</span></p>
+              <p><strong>Date:</strong> <span id="previewDate">-</span></p>
+            </div>
+            <div class="receipt-footer">
+              <p><strong>Total Amount: ₹<span id="previewTotal">-</span></strong></p>
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn primary">Process Payment</button>
+        <button type="button" class="btn" id="back-step3">Back</button>
+      </form>
+    </section>
+
+    <!-- Step 4: Receipt -->
+    <section class="payment-step" id="step4">
+      <h2>Payment Successful!</h2>
+      <div class="card">
+        <div class="receipt-preview" id="finalReceipt">
+          <!-- Receipt content will be generated here -->
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+          <button class="btn primary" id="downloadReceipt">Download PDF Receipt</button>
+          <button class="btn" id="printReceipt">Print Receipt</button>
+          <button class="btn" id="newPayment">Make Another Payment</button>
+        </div>
+        
+        <div class="muted" style="text-align: center;">
+          <p id="paymentStatusMessage">Payment has been processed successfully. Receipt has been sent to your email.</p>
+          <p>Transaction ID: <span id="transactionId">-</span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>&copy; <span id="year"></span> Government Engineering College Hostel</span>
+    </div>
+  </footer>
+
+  <script src="payment.js"></script>
+</body>
+</html>
